@@ -11,19 +11,6 @@
 #include <sys/ioctl.h>
 
 /* -------------------------------------------------------------------------- */
-/* Primitives                                                                 */
-/* -------------------------------------------------------------------------- */
-typedef char            i8;
-typedef short           i16;
-typedef int             i32;
-typedef long            i64;
-typedef unsigned char   u8;
-typedef unsigned short  u16;
-typedef unsigned int    u32;
-typedef unsigned long   u64;
-
-
-/* -------------------------------------------------------------------------- */
 /* Defines                                                                    */
 /* -------------------------------------------------------------------------- */
 #define TRUE    1
@@ -119,16 +106,16 @@ typedef enum Direction_e {
 /* -------------------------------------------------------------------------- */
 /* -------------------------- Positional structure -------------------------- */
 typedef struct Point_s {
-    u32 x;
-    u32 y;
+    unsigned int x;
+    unsigned int y;
 } Point_t;
 
 /* ----------------------------- Board structure ---------------------------- */
 typedef struct Board_s {
-    u32 width;
-    u32 height;
+    unsigned int width;
+    unsigned int height;
 
-    u32 availSpace;
+    unsigned int availSpace;
 
     Point_t snackPos;
 } Board_t;
@@ -148,7 +135,7 @@ typedef struct Snake_s {
     SnakeBody_t * head;
     SnakeBody_t * tail;
 
-    u32 bodyLength;
+    unsigned int bodyLength;
 
     Direction_t direction;
 } Snake_t;
@@ -174,7 +161,7 @@ void moveSnake(Snake_t * snake);
 /* --------------------------- Rendering functions -------------------------- */
 void initRender();
 void deinitRender();
-void drawScreen(Board_t * board, Snake_t * snake, u8 landing);
+void drawScreen(Board_t * board, Snake_t * snake, unsigned char landing);
 
 
 /* -------------------------------------------------------------------------- */
@@ -183,15 +170,15 @@ void drawScreen(Board_t * board, Snake_t * snake, u8 landing);
 struct winsize winTerminal;
 struct termios terminal, oldTerminal;
 
-i8 * landingString = "Press \u2190\u2191\u2192\u2193 to start, or Enter to exit";
+const char * landingString = "Press \u2190\u2191\u2192\u2193 to start, or Enter to exit";
 
-u8 exitPressed;
+unsigned char exitPressed;
 
 /* -------------------------------------------------------------------------- */
 /* Function Definitions                                                       */
 /* -------------------------------------------------------------------------- */
 /* ---------------------------------- Main ---------------------------------- */
-i32 main(i32 argc, i8 ** argv)
+int main(int argc, char ** argv)
 {
     srand(time(NULL));
 
@@ -210,7 +197,7 @@ i32 main(i32 argc, i8 ** argv)
 
     clock_t start;
 
-    u8 once = TRUE;
+    unsigned char once = TRUE;
 
     while (TRUE)
     {
@@ -302,7 +289,7 @@ i32 main(i32 argc, i8 ** argv)
 /* -------------------------- Game logic functions -------------------------- */
 void detectKeypress(GameStates_t * gameState, Snake_t * snake)
 {
-    i8 key = getchar();
+    char key = getchar();
     if (key == '\e')
     {
         getchar();
@@ -427,7 +414,7 @@ void initSnake(Board_t * board, Snake_t * snake)
     snake->head = HEAD;
     snake->tail = TAIL;
 
-    for (u8 i = 0; i < INIT_BODY_COUNT; i++)
+    for (unsigned int i = 0; i < INIT_BODY_COUNT; i++)
         addBody(board, snake);
 }
 
@@ -574,14 +561,14 @@ void deinitRender()
     printf("\e[2J");
 }
 
-void drawScreen(Board_t * board, Snake_t * snake, u8 landing)
+void drawScreen(Board_t * board, Snake_t * snake, unsigned char landing)
 {
     printf("\e[2J");
     printf("\e[H");
 
     if (landing)
     {
-        printf("\e[1;%dH%s", (u32)(snake->head->pos.x - (strlen(landingString) / 2)), landingString);
+        printf("\e[1;%dH%s", (unsigned int)(snake->head->pos.x - (strlen(landingString) / 2)), landingString);
         printf("\e[%d;%dH"HEAD_SYM, snake->head->pos.y, snake->head->pos.x);
     }
     else
